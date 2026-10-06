@@ -150,8 +150,12 @@ resource "aws_cloudwatch_metric_alarm" "ticketer_errors" {
   alarm_actions = [var.critical_topic_arn]
   ok_actions    = [var.critical_topic_arn]
 
+  # Only severity is forced here - var.tags is expected to already carry the
+  # right "service" tag (every account's project sets it from its own
+  # vars.yaml), and overriding it with lambda_function_name would drift from
+  # that convention wherever the Lambda's name isn't the bare service name
+  # (e.g. "ms-qa-cloudwatch-ado-ticketer" vs. "cloudwatch-ado-ticketer").
   tags = merge(var.tags, {
     severity = "critical"
-    service  = var.lambda_function_name
   })
 }
