@@ -147,8 +147,11 @@ resource "aws_cloudwatch_metric_alarm" "ticketer_errors" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   treat_missing_data  = "notBreaching"
 
+  # No ok_actions - Teams/ADO are push-only channels, not an auto-resolving
+  # system like PagerDuty, so a recovery message isn't actionable here
+  # either; it was pure noise, including paging on-call outside hours for
+  # something that had already self-resolved.
   alarm_actions = [var.critical_topic_arn]
-  ok_actions    = [var.critical_topic_arn]
 
   # Only severity is forced here - var.tags is expected to already carry the
   # right "service" tag (every account's project sets it from its own
